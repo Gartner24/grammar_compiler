@@ -1,0 +1,20 @@
+# Función para dibujar una flor
+def dibujarFlor(petalos, tamano) {
+    REPEAT petalos {
+        REPEAT 36 {
+            FD tamano / 36
+            LT 10
+        }
+        LT 360 / petalos
+    }
+}
+
+# Función para dibujar una espiral de flores con un tamaño inicial
+def espiralDeFlores(tamanoInicial) {
+    for tamano, angulo in zip(range(tamanoInicial, tamanoInicial + 90, 15), range(0, 360, 45)) {
+        dibujarFlor(6, tamano)
+        LT angulo
+    }
+}
+
+espiralDeFlores(100)

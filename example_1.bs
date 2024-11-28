@@ -1,0 +1,29 @@
+# Funcion para dibujar un rectangulo
+def drawRectangle(width, height) {
+    REPEAT 2 {
+        FD width
+        RT 90
+        FD height
+        RT 90
+    }
+}
+
+# Función para dibujar un triángulo equilátero
+def drawTriangle(base) {
+    REPEAT 3 {
+        FD base        # Dibuja un lado del triángulo
+        LT 120         # Gira 120 grados para formar el ángulo interno
+    }
+}
+
+# Función para dibujar una casa con un rectángulo y un triángulo
+def drawHouse(size) {
+    # Dibuja el cuerpo de la casa
+    drawRectangle(size, size / 2)
+
+    # Dibuja el techo
+    drawTriangle(size)
+}
+
+# Dibuja una casa de tamaño 100
+drawHouse(300)

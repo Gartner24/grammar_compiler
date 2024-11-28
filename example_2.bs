@@ -1,0 +1,9 @@
+# Función para dibujar una estrella de n puntas
+def dibujarEstrella(lado, puntas) {
+    REPEAT puntas {
+        FD lado
+        LT 180 - (180 / puntas)
+    }
+}
+
+dibujarEstrella(300, 7)

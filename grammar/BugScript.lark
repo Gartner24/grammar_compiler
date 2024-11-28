@@ -1,0 +1,108 @@
+// Character Name
+%import common.CNAME
+
+// Ignorar espacios en blanco y comentarios
+WHITESPACE: /[\r\n\s]+/
+COMMENT: /#[^\r\n]+/
+%ignore WHITESPACE
+%ignore COMMENT
+
+// Palabras clave reservadas
+FD: "FD"
+BK: "BK"
+LT: "LT"
+RT: "RT"
+WIDTH: "WIDTH"
+PU: "PU"
+PD: "PD"
+
+// Operadores lógicos
+NOT: "!" | "~"
+AND: "and" | "/\\"
+OR: "or" | "\\/"
+
+// Un programa consiste en una o más instrucciones básicas.
+start: basic_instruction+
+
+// Instrucción básica (con argumento, sin argumento, repetición, condicional, función, etc.)
+basic_instruction: arg_instruction
+                 | no_arg_instruction
+                 | repeat_instruction
+                 | conditional_instruction
+                 | function_definition
+                 | function_call
+                 | for_loop
+
+// Instrucciones con argumento
+arg_instruction: (FD | BK | LT | RT | WIDTH) operand
+
+// Instrucciones sin argumento
+no_arg_instruction: PU | PD
+
+// Bloques explícitos
+block: "{" basic_instruction+ "}"
+
+// Instrucción REPEAT
+repeat_instruction: "REPEAT" operand block
+
+
+// Condicional IF-ELSE
+conditional_instruction: "if" "(" condition ")" block ["else" block]
+
+// Definición de funciones
+function_definition: "def" FUNCTION_NAME "(" [parameter_list] ")" block
+
+// Llamado a funciones
+function_call: FUNCTION_NAME "(" [argument_list] ")"
+
+// Ciclo FOR
+for_loop: "for" CNAME "in" range block
+        | "for" CNAME ("," CNAME)+ "in" zip_call block
+
+// Rango para iteraciones, opcionalmente con un solo valor
+range: "range(" operand ("," operand ("," operand)?)? ")"
+
+// Uso de zip en for-loop
+zip_call: "zip(" range ("," range)+ ")"
+
+// Operandos y expresiones aritméticas
+operand: INTNUM | CNAME | arithmetic_expression | "(" arithmetic_expression ")"
+arithmetic_expression: operand arithmetic_operator operand
+
+// Condiciones
+condition: comparison
+         | negation
+         | grouped_condition
+         | disjunction
+         | conjunction
+
+negation: NOT condition
+grouped_condition: "(" condition ")"
+conjunction: condition AND condition
+disjunction: condition OR condition
+
+comparison: operand comparison_operator operand
+
+// Operadores de comparación como tokens explícitos
+comparison_operator: EQUALS | NOT_EQUALS | GREATER_THAN | LESS_THAN | GREATER_EQUAL | LESS_EQUAL
+EQUALS: "=="
+NOT_EQUALS: "!="
+GREATER_THAN: ">"
+LESS_THAN: "<"
+GREATER_EQUAL: ">="
+LESS_EQUAL: "<="
+
+
+// Parámetros y argumentos
+parameter_list: CNAME ("," CNAME)*
+argument_list: operand ("," operand)*
+
+// Operadores aritméticos
+arithmetic_operator: PLUS | MINUS | STAR | SLASH
+PLUS: "+"
+MINUS: "-"
+STAR: "*"
+SLASH: "/"
+
+FUNCTION_NAME: /(?!(and|or|not)$)[a-zA-Z_][a-zA-Z0-9_]*/
+INTNUM : /-?\d+(\.\d+)?([eE][+-]?\d+)?/
